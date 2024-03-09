@@ -1,0 +1,20 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: rhods-dashboard
+  namespace: redhat-ods-applications
+  labels:
+    provider: codeready-toolchain
+    run: rhods-dashboard
+spec:
+  host: ''
+  to:
+    kind: Service
+    name: rhods-dashboard
+    weight: 100
+  port:
+    targetPort: '8090'
+  tls:
+    termination: edge
+  wildcardPolicy: None
+

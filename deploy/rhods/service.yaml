@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rhods-dashboard
+  namespace: redhat-ods-applications
+  labels:
+    provider: codeready-toolchain
+    run: rhods-dashboard
+spec:
+  ports:
+    - name: '8090'
+      protocol: TCP
+      port: 80
+      targetPort: 8090
+  type: ClusterIP
+  sessionAffinity: None
+  selector:
+    run: rhods-dashboard
+

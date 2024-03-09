@@ -1,0 +1,8 @@
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: htmlserver
+  namespace: redhat-ods-applications
+  labels:
+    provider: codeready-toolchain
+

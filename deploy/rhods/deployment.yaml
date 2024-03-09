@@ -1,0 +1,80 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: rhods-dashboard
+  namespace: redhat-ods-applications
+  labels:
+    provider: codeready-toolchain
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: rhods-dashboard
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: rhods-dashboard
+        run: rhods-dashboard
+    spec:
+      containers:
+        - resources:
+            requests:
+              cpu: 50m
+              memory: 100M
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8090
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 1
+          terminationMessagePath: /dev/termination-log
+          name: htmlserver
+          command:
+            - htmlserver
+          livenessProbe:
+            httpGet:
+              path: /index.html
+              port: 8090
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          ports:
+            - name: metrics
+              containerPort: 8090
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          startupProbe:
+            httpGet:
+              path: /index.html
+              port: 8090
+              scheme: HTTP
+            initialDelaySeconds: 1
+            timeoutSeconds: 1
+            periodSeconds: 1
+            successThreshold: 1
+            failureThreshold: 180
+          terminationMessagePolicy: File
+          image: 'quay.io/alexeykazakov/htmlserver:9b154a8'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: htmlserver
+      serviceAccount: htmlserver
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
