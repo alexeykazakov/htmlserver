@@ -113,6 +113,6 @@ parameters:
   - name: NAMESPACE
     value: 'alexeykazakov-dev'
   - name: IMAGE
-    value: quay.io/openshiftio/codeready-toolchain/htmlserver:latest
+    value: quay.io/alexeykazakov/htmlserver:latest
   - name: REPLICAS
     value: '1'

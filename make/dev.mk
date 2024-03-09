@@ -1,7 +1,7 @@
 ETC_HOSTS=/etc/hosts
 
 APP_NAMESPACE ?= $(NAMESPACE)
-NAMESPACE ?= "htmlserver"
+NAMESPACE ?= "alexeykazakov-dev"
 
 .PHONY: create-namespace
 ## Create the test namespace
@@ -36,7 +36,8 @@ deploy: create-namespace build docker-image-dev docker-push-dev apply-resources 
 apply-resources:
 	$(Q)-oc process -f ./deploy/htmlserver.yaml \
         -p NAMESPACE=${NAMESPACE} \
-        | oc create -f -
+        -p IMAGE=${IMAGE} \
+        | oc apply -f -
 
 .PHONY: print-route
 print-route:
