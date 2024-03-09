@@ -29,7 +29,7 @@ reset-namespace: clean-namespace create-namespace
 
 .PHONY: deploy
 ## Deploy htmlserver
-deploy: create-namespace build docker-image-dev docker-push-dev apply-resources print-route
+deploy: create-namespace build docker-image docker-push apply-resources print-route
 
 .PHONY: apply-resources
 ## Apply htmlserver resources
