@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" class="pf-m-redhat-font">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://unpkg.com/@patternfly/patternfly@4.6.3/patternfly.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="landingpage.css">
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=6LdL7aMlAAAAALvuuAZWjwlOLRKMCIrWjOpv-U3G"></script>
+  <title>OpenShift Developer Sandbox</title>
+</head>
+<body>
+  <div class="pf-c-page" id="page-layout-horizontal-nav">
+  <a class="pf-c-skip-to-content pf-c-button pf-m-primary" href="#main-content-page-layout-horizontal-nav">Skip to content</a>
+  <header role="banner" class="pf-c-page__header">
+    <div class="pf-c-page__header-brand">
+      <a class="pf-c-page__header-brand-link">
+        <img class="pf-c-brand" src="redhat-logo.svg" alt="Red Hat Logo" />
+      </a>
+    </div>
+    <div class="pf-c-page__header-tools">
+      <div class="pf-c-page__header-tools-group">
+        <div class="pf-m-user">
+          <div class="pf-l-stack">
+            <div class="pf-l-stack__item">
+                <span id="user-loggedin"><span id="username"></span> <button class="logoutbutton" onclick="keycloak.logout()">Logout</button></span>
+            </div>
+            <div class="pf-l-stack__item"><span id="userid"></span></div>
+            <div class="pf-l-stack__item"><span id="originalsub"></span></div>
+            <div class="pf-l-stack__item"><button class="pf-c-button pf-m-inline pf-m-link pf-m-small" type="button"id="login-command" onclick="showLoginCommand()">Proxy login command</button></div>
+            <div class="pf-l-stack__item" id="oc-login" style="display:none">
+              <div class="pf-c-clipboard-copy">
+                <div class="pf-c-clipboard-copy__group">
+                  <button
+                          class="pf-c-button pf-m-control"
+                          type="button"
+                          id="expandable-not-expanded-readonly-toggle"
+                          aria-labelledby="expandable-not-expanded-readonly-toggle expandable-not-expanded-readonly-text-input"
+                          aria-controls="expandable-not-expanded-readonly-content"
+                  >
+                    <div class="pf-c-clipboard-copy__toggle-icon">
+                      <i class="fas fa-angle-right" aria-hidden="true"></i>
+                    </div>
+                  </button>
+                  <input
+                          class="pf-c-form-control"
+                          readonly
+                          type="text"
+                          id="expandable-not-expanded-readonly-text-input"
+                          aria-label="Copyable input"
+                  />
+                  <button
+                          class="pf-c-button pf-m-control"
+                          type="button"
+                          aria-label="Copy to clipboard"
+                          id="expandable-not-expanded-readonly-copy-button"
+                          aria-labelledby="expandable-not-expanded-readonly-copy-button expandable-not-expanded-readonly-text-input"
+                          onclick="copyCommand()"
+                  >
+                    <i class="fas fa-copy" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div
+                        class="pf-c-clipboard-copy__expandable-content"
+                        hidden
+                        id="expandable-not-expanded-readonly-content"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <span id="user-notloggedin"></span>
+        </div>
+      </div>
+    </div>
+  </header> 
+  <main role="main" class="pf-c-page__main" tabindex="-1">
+    <section class="pf-c-page__main-section pf-m-light rhd-header">
+      <div style="position: relative">
+        <table>
+          <tr>
+            <td><img class="pf-c-brand rhd-logo" src="rhdeveloper-logo.svg" alt="Red Hat Developer Logo" /></td>
+            <td style="padding-left: 0.8em; padding-bottom: 10px; font-size: 1.5em;">OpenShift Developer Sandbox</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+    <section class="pf-c-page__main-section">
+      <div id="state-error" style="margin-bottom: 15px">
+        <div class="pf-c-alert pf-m-danger pf-m-inline" aria-label="error">
+          <div class="pf-c-alert__icon">
+            <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+          </div>
+          <h4 class="pf-c-alert__title">
+          <span class="pf-screen-reader">Error:</span>Something went wrong, please try again.</h4>
+          <div class="pf-c-alert__description">
+            <p><span id="errorStatus"></span></p>
+          </div>
+        </div>
+      </div>
+      <div class="pf-c-content">
+        <div class="toolchain-state" id="state-getstarted">
+          <button id="loginbutton" class="getstartedbutton-disabled" onclick="login()">Get Started with OpenShift Developer Sandbox</button>
+          <p class="terms">
+            <input onchange="termsAgreed(this)" style="display: table-cell; vertical-align: middle;" type="checkbox">
+            <span>I agree to the <a href="https://www.openshift.com/legal/terms/">Terms and Conditions</a></span>
+          </p>
+          <p class="terms">&copy; 2020, Red Hat Inc.</p>
+        </div>
+        <div class="toolchain-state" id="state-initiate-phone-verification">
+          <p>You need to confirm your account using a mobile phone. Please enter you phone number including country code:</p>
+          <p>
+            Country Code and Phone Number: <input type="text" name="countrycode" id="phone-countrycode" required minlength="1" maxlength="4" size="4" placeholder="+01">
+            - <input type="text" name="phonenumber" id="phone-phonenumber" required minlength="6" maxlength="32" size="15" placeholder="123-4567890">
+            <button class="phone-button" onclick="initiatePhoneVerification()">Send Code</button>
+          </p>
+          <p class="terms">Cost may apply for receiving texts outside of the United States. Please consult with your service provider for details.</p>
+          <p>Alternatively you may confirm your account using an activation code:</p>
+          <p>
+            Activation Code: <input type="text" name="activationcode" id="activationcode" required minlength="5" maxlength="5" size="10" placeholder="XXXXX">
+            <button class="activationcode-button" onclick="submitActivationCode()">Send Code</button>
+          </p>
+        </div>
+        <div class="toolchain-state" id="state-complete-phone-verification">
+          <p>A text was sent to your mobile phone. Please enter the received code below:</p>
+          <p>
+            Received Code: <input type="text" name="verificationcode" id="phone-verificationcode" required minlength="4" maxlength="10" size="10" placeholder="123456">
+            <button class="phone-button" onclick="completePhoneVerification()">Verify Code</button>
+          </p>
+          <p class="terms">
+            No text received? <button class="link-button" onclick="resendPhoneVerification()">Resend Code</button> <span id="phone-verificationcode-resend-status"><b>Code was resent..</b></span>
+            &nbsp;Use a different phone number? <button class="link-button" onclick="restartPhoneVerification()">Update Phone Number</button> <span id="phone-verificationcode-resend-status"><b>Code was resent..</b></span>
+          </p>
+        </div>
+        <div class="toolchain-state" id="state-waiting-for-approval">
+          <h1><i class="fas fa-spinner fa-pulse"></i> Your OpenShift Developer Sandbox account is waiting for approval</h1>
+        </div>
+        <div class="toolchain-state" id="state-waiting-for-provisioning">
+          <h1><i class="fas fa-spinner fa-pulse"></i> Your OpenShift Developer Sandbox account is waiting for provisioning</h1>
+        </div>
+        <div class="toolchain-state" id="state-provisioned">
+          <h1><i class="fas fa-spinner fa-pulse"></i> Your OpenShift Developer Sandbox account has been provisioned</h1>
+        </div>
+        <div class="toolchain-dashboard" id="dashboard">
+          <div class="pf-c-content">
+            <div class="pf-l-gallery pf-m-gutter">
+              <div class="pf-l-gallery__item">
+                <div class="pf-c-card">
+                  <div class="pf-c-card__body">
+                    <img class="pf-c-brand box-logo" src="openshift-logo.svg" alt="OpenShift Logo" />
+                    <h1>Red Hat OpenShift Dev Experience</h1>
+                    <span><a id="stateConsole" href="#" class="pf-c-nav__link">Start using your Sandbox..</a></span>
+                  </div>
+                </div>
+              </div>
+              <div class="pf-l-gallery__item" style="display:none">
+                <div class="pf-c-card">
+                  <div class="pf-c-card__body">
+                    <img class="pf-c-brand box-logo" src="codereadyws-logo.svg" alt="CodeReady Workspaces Logo" />
+                    <h1>CodeReady&nbsp;Workspaces<br>&nbsp;</h1>
+                    <span><a id="cheDashboard" href="#" class="pf-c-nav__link">Start Coding..</a></span>
+                  </div>
+                </div>
+              </div>
+            </div>    
+            <div class="pf-l-gallery pf-m-gutter">
+            </div>
+          </div>    
+        </div>  
+      </div>
+    </section>
+    <section class="pf-c-page__main-section pf-m-light">
+      <div class="pf-l-gallery pf-m-gutter"/>
+    </section>
+  </main>
+</div>
+<script src="landingpage.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: htmlserver
+objects:
+  - apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      labels:
+        provider: codeready-toolchain
+      name: htmlserver
+      namespace: ${NAMESPACE}
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      labels:
+        provider: codeready-toolchain
+      name: htmlserver
+      namespace: ${NAMESPACE}
+    spec:
+      replicas: ${{REPLICAS}}
+      selector:
+        matchLabels:
+          name: htmlserver
+      template:
+        metadata:
+          labels:
+            name: htmlserver
+            run: htmlserver
+        spec:
+          serviceAccountName: htmlserver
+          containers:
+            - name: htmlserver
+              image: ${IMAGE}
+              ports:
+                - containerPort: 8090
+                  name: metrics
+              command:
+                - htmlserver
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /index.html
+                  port: 8090
+                  scheme: HTTP
+                initialDelaySeconds: 1
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              readinessProbe:
+                failureThreshold: 1
+                httpGet:
+                  path: /index.html
+                  port: 8090
+                  scheme: HTTP
+                initialDelaySeconds: 1
+                periodSeconds: 1
+                successThreshold: 1
+                timeoutSeconds: 1
+              startupProbe:
+                failureThreshold: 180
+                httpGet:
+                  path: /index.html
+                  port: 8090
+                  scheme: HTTP
+                initialDelaySeconds: 1
+                periodSeconds: 1
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources:
+                requests:
+                  cpu: "50m"
+                  memory: "100M"
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: htmlserver
+      namespace: ${NAMESPACE}
+      labels:
+        provider: codeready-toolchain
+        run: htmlserver
+    spec:
+      ports:
+        - name: "8090"
+          protocol: TCP
+          port: 80
+          targetPort: 8090
+      selector:
+        run: htmlserver
+      type: ClusterIP
+      sessionAffinity: null
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      labels:
+        provider: codeready-toolchain
+        run: htmlserver
+      name: htmlserver
+      namespace: ${NAMESPACE}
+    spec:
+      host: ''
+      port:
+        targetPort: "8090"
+      to:
+        kind: Service
+        name: htmlserver
+        weight: 100
+      tls:
+        termination: edge
+      wildcardPolicy: None
+parameters:
+  - name: NAMESPACE
+    value: 'alexeykazakov-dev'
+  - name: IMAGE
+    value: quay.io/openshiftio/codeready-toolchain/htmlserver:latest
+  - name: REPLICAS
+    value: '1'
