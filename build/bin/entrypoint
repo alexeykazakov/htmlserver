@@ -5,8 +5,8 @@
 
 if ! whoami &>/dev/null; then
   if [ -w /etc/passwd ]; then
-    echo "${USER_NAME:-registration-service}:x:$(id -u):$(id -g):${USER_NAME:-registration-service} user:${HOME}:/sbin/nologin" >> /etc/passwd
+    echo "${USER_NAME:-htmlserver}:x:$(id -u):$(id -g):${USER_NAME:-htmlserver} user:${HOME}:/sbin/nologin" >> /etc/passwd
   fi
 fi
 
-exec ${REG_SERVICE} $@
+exec ${HTML_SERVICE} $@

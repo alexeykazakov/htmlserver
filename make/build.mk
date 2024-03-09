@@ -22,7 +22,7 @@ build-dev:
 
 # builds the production binary with bundled assets
 ## builds production binary
-build-prod: generate
+build-prod:
 	$(Q)CGO_ENABLED=0 GOARCH=amd64 GOOS=linux \
 		go build ${V_FLAG} ${LDFLAGS} \
 		-o $(OUT_DIR)/bin/htmlserver \
